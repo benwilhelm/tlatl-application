@@ -44,3 +44,28 @@ test('GET /users/:id responds 404 for non-existent id', async () => {
   // assert
   expect(response.status).toEqual(404);
 });
+
+test('POST /users creates new user record from JSON payload', async () => {
+  // arrange
+  const api = request(app);
+  const payload = {
+    name: 'New User',
+    email: 'new@example.com',
+  };
+  const route = '/users';
+
+  // act
+  const response = await api.post(route).send(payload);
+
+  // assert
+  expect(response.status).toEqual(200);
+  expect(response.body.id).toBeDefined();
+  expect(response.body).toEqual(expect.objectContaining(payload));
+
+  // temporary assertion on persisted record
+  const getResponse = await request(app).get(`/users/${response.body.id}`);
+  expect(getResponse.body).toEqual({
+    id: response.body.id,
+    ...payload,
+  });
+});
