@@ -7,6 +7,25 @@ const logging = process.env.DB_LOGGING || process.env.NODE_ENV !== 'test';
 export const db = new Sequelize('sqlite::memory:', { logging });
 
 export const User = db.define('User', {
-  name: DataTypes.STRING,
-  email: DataTypes.STRING,
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notNull: {
+        msg: 'Name is a required field',
+      },
+    },
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notNull: {
+        msg: 'Email is a required field',
+      },
+      isEmail: {
+        msg: 'Email does not appear valid',
+      },
+    },
+  },
 });
