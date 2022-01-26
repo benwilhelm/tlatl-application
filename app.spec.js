@@ -31,3 +31,16 @@ test('GET /users/:id responds with user record', async () => {
     email: 'test@example.com',
   });
 });
+
+test('GET /users/:id responds 404 for non-existent id', async () => {
+  // arrange
+  const api = request(app);
+  const route = '/users/456';
+  // lack of user record
+
+  // act
+  const response = await api.get(route);
+
+  // assert
+  expect(response.status).toEqual(404);
+});
