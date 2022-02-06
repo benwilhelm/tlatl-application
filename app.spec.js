@@ -1,5 +1,13 @@
 import request from 'supertest';
 import app from './app';
+import { db, User } from './db';
+
+beforeEach(async () => {
+  await db.sync({ force: true });
+  await User.bulkCreate([
+    { id: 123, name: 'Test User', email: 'test@example.com' },
+  ]);
+});
 
 test('GET / responds with hello world', async () => {
   // arrange
@@ -25,11 +33,15 @@ test('GET /users/:id responds with user record', async () => {
 
   // assert
   expect(response.status).toEqual(200);
-  expect(response.body).toEqual({
-    id: userId,
-    name: 'Test User',
-    email: 'test@example.com',
-  });
+  expect(response.body.createdAt).toBeDefined();
+  expect(response.body.updatedAt).toBeDefined();
+  expect(response.body).toEqual(
+    expect.objectContaining({
+      id: userId,
+      name: 'Test User',
+      email: 'test@example.com',
+    })
+  );
 });
 
 test('GET /users/:id responds 404 for non-existent id', async () => {
@@ -60,12 +72,27 @@ test('POST /users creates new user record from JSON payload', async () => {
   // assert
   expect(response.status).toEqual(200);
   expect(response.body.id).toBeDefined();
+  expect(response.body.createdAt).toBeDefined();
+  expect(response.body.updatedAt).toBeDefined();
   expect(response.body).toEqual(expect.objectContaining(payload));
-
-  // temporary assertion on persisted record
-  const getResponse = await request(app).get(`/users/${response.body.id}`);
-  expect(getResponse.body).toEqual({
-    id: response.body.id,
-    ...payload,
-  });
 });
+
+test('POST /users returns 400 and errors for missing name', async () => {
+  // arrange
+  const api = request(app);
+  const route = '/users';
+  const params = { email: 'new@example.com' }; // intentionally missing name
+
+  const response = await api.post(route).send(params);
+
+  expect(response.status).toEqual(400);
+  expect(response.body.errors).toEqual([
+    {
+      message: 'Name is a required field',
+      path: 'name',
+      value: null,
+    },
+  ]);
+});
+
+test.todo('POST /users responds 500 in case of error');
