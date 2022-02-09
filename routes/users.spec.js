@@ -1,6 +1,6 @@
 import request from 'supertest';
-import app from './app';
-import { db, User } from './db';
+import app from '../app';
+import { db, User } from '../db/index.js';
 
 beforeEach(async () => {
   await db.sync({ force: true });

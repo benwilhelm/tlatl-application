@@ -1,4 +1,5 @@
-import { db, User } from './db';
+import { db } from './db.js';
+import { User } from './user.js';
 
 beforeAll(() => db.sync({ force: true }));
 
