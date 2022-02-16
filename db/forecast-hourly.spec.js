@@ -153,21 +153,21 @@ describe('getByZipAndTimestamp', () => {
   it('should fetch records younger than maxAge', async () => {
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2022-02-10T05:00:00.000Z'));
-    const subject = paramFactory({
+    const params = paramFactory({
       updatedAt: new Date('2022-02-10T02:01:00.000Z'),
     });
 
     // slight hack to use bulkCreate, because single create doesn't
     // allow us to override the updatedAt property
-    await ForecastHourly.bulkCreate([subject]);
+    await ForecastHourly.bulkCreate([params]);
 
     const result = await ForecastHourly.getByZipAndTimestamp(
-      subject.zip,
-      subject.timestamp,
+      params.zip,
+      params.timestamp,
       3600 * 3
     );
 
-    expect(result).toEqual(expect.objectContaining(subject));
+    expect(result).toEqual(expect.objectContaining(params));
   });
 });
 
