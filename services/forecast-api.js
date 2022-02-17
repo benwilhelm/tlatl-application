@@ -14,3 +14,13 @@ export default class ForecastApiClient {
     return response.data;
   }
 }
+
+/**
+ * IIFE to return singleton instance of service
+ */
+export const getService = (() => {
+  const service = new ForecastApiClient({
+    apiKey: process.env.WEATHER_API_KEY,
+  });
+  return () => service;
+})();

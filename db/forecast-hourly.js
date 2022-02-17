@@ -59,12 +59,6 @@ export const ForecastHourly = db.define('ForecastHourly', {
   skies: {
     type: DataTypes.TEXT,
     allowNull: false,
-    validate: {
-      isAlpha: {
-        args: true,
-        msg: 'invalid skies',
-      },
-    },
   },
 });
 

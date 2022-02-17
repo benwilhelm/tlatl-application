@@ -95,4 +95,5 @@ test('POST /users returns 400 and errors for missing name', async () => {
   ]);
 });
 
+// OYO
 test.todo('POST /users responds 500 in case of error');

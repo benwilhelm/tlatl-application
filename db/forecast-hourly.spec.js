@@ -1,5 +1,9 @@
 import { resetDb } from './test-helpers.js';
 import { ForecastHourly } from './forecast-hourly.js';
+import {
+  paramFactory,
+  mockTimeNow,
+} from './test-helpers/forecast-hourly.fixtures.js';
 
 beforeEach(resetDb);
 afterEach(() => {
@@ -89,12 +93,6 @@ describe('validations', () => {
     const fn = () => ForecastHourly.create(params);
     await expect(fn).rejects.toThrowError(/skies cannot be null/i);
   });
-
-  test('skies must be float', async () => {
-    const params = paramFactory({ skies: 6 });
-    const fn = () => ForecastHourly.create(params);
-    await expect(fn).rejects.toThrowError(/invalid skies/i);
-  });
 });
 
 describe('getByZipAndTimestamp', () => {
@@ -126,7 +124,10 @@ describe('getByZipAndTimestamp', () => {
     });
     await ForecastHourly.bulkCreate([newer, older]);
 
-    const result = await ForecastHourly.getByZipAndTimestamp('11111', 3650);
+    const result = await ForecastHourly.getByZipAndTimestamp(
+      '11111',
+      mockTimeNow
+    );
     expect(result).toEqual(expect.objectContaining(newer));
   });
 
@@ -170,16 +171,3 @@ describe('getByZipAndTimestamp', () => {
     expect(result).toEqual(expect.objectContaining(params));
   });
 });
-
-function paramFactory(overrides = {}) {
-  const defaults = {
-    zip: '11111',
-    timestamp: 3600,
-    windSpeed: 10,
-    windDirection: 'N',
-    temperature: 65,
-    skies: 'CLEAR',
-  };
-
-  return { ...defaults, ...overrides };
-}

@@ -1,4 +1,8 @@
-export const requestTimestamp = 1644472858;
+export const mockTimeNow = 1644472858;
+export const mockTimeNowTopOfHour = 1644472800;
+export const mockTimeNowTopOfDay = 1644451200;
+export const mockApiKey = 'test-api-key';
+
 export const responseOneDayHourly = {
   location: {
     name: 'Chicago',
