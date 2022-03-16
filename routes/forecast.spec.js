@@ -23,8 +23,8 @@ test('GET /forecast returns cached record on cache hit, does not call weather ap
   expect(spy).not.toHaveBeenCalled();
 });
 
-//  NOTE test pollution because I ran db sync in beforeAll
-test.only('GET /forecast returns from external API on cache miss', async () => {
+//  lecture note - test pollution because I ran db sync in beforeAll
+test('GET /forecast returns from external API on cache miss', async () => {
   const spy = jest.spyOn(ForecastApiClient.prototype, 'getByZipAndTimestamp');
   const zip = '00200';
   const ts = mockTimeNow;
@@ -37,4 +37,17 @@ test.only('GET /forecast returns from external API on cache miss', async () => {
   expect(spy).toHaveBeenCalledWith(zip, ts);
   expect(res.status).toEqual(200);
   expect(res.body.skies).toEqual('API_RESPONSE');
+});
+
+test('GET /forecast return 500 on cache client error', async () => {
+  jest
+    .spyOn(ForecastApiClient.prototype, 'getByZipAndTimestamp')
+    .mockImplementationOnce(() => {
+      throw new Error('oh noes!');
+    });
+
+  const zip = '00200';
+  const ts = mockTimeNow;
+  const response = await request(app).get(`/forecast?zip=${zip}&ts=${ts}`);
+  expect(response.status).toEqual(500);
 });
