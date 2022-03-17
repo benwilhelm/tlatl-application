@@ -2,7 +2,7 @@ import {
   ForecastCacheService,
   apiResponseToDbModel,
 } from './forecast-cache.service';
-import { current, stale } from './fixtures/forecast-hourly.fixtures';
+import { current, stale } from '../db/fixtures/forecast-hourly.fixtures';
 import {
   responseOneDayHourly,
   mockZip,
