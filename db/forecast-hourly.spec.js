@@ -14,7 +14,14 @@ const truncateTable = async () => {
   await ForecastHourly.destroy({ where: {}, truncate: true });
 };
 
-beforeAll(syncDb);
+beforeAll(async () => {
+  await syncDb();
+  jest.useFakeTimers();
+  jest.setSystemTime(new Date(mockTimeNow * 1000));
+});
+afterAll(() => {
+  jest.useRealTimers();
+});
 beforeEach(truncateTable);
 
 test('getByZipAndTimestamp returns most recently updated record matching zip and timestamp', async () => {
@@ -39,4 +46,16 @@ test('getByZipAndTimestamp queries by zip and timestamp', async () => {
   expect(result).toEqual(expect.objectContaining(lessCurrent));
 });
 
-test.todo('getByZipAndTimestamp wont return stale record if maxAge passed');
+test('getByZipAndTimestamp wont return stale record if maxAge passed', async () => {
+  // using bulkcreate so it doesn't overwrite createdAt/updatedAt
+  await ForecastHourly.bulkCreate([stale]);
+  const maxAge = 3 * 3600; // 3 hours
+
+  const result = await ForecastHourly.getByZipAndTimestamp(
+    mockZip,
+    mockTimeNow,
+    maxAge
+  );
+
+  expect(result).toBeNull();
+});
