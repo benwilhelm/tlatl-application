@@ -3,45 +3,40 @@ import { ForecastHourly } from './forecast-hourly';
 import {
   current,
   lessCurrent,
+  wrongZip,
+  wrongTimestamp,
   stale,
 } from './fixtures/forecast-hourly.fixtures';
+import { mockTimeNow, mockZip } from '../test-helpers/fixtures.js';
 
 const syncDb = () => db.sync({ force: true });
-const truncateTable = () =>
-  ForecastHourly.destroy({ where: {}, truncate: true });
+const truncateTable = async () => {
+  await ForecastHourly.destroy({ where: {}, truncate: true });
+};
 
 beforeAll(syncDb);
 beforeEach(truncateTable);
 
-test('getByZipAndTimestamp returns current if found', async () => {
-  await ForecastHourly.bulkCreate([stale, current]);
-  const { zip, timestamp } = current;
-
-  const result = await ForecastHourly.getByZipAndTimestamp(zip, timestamp);
-
-  expect(result).toEqual(expect.objectContaining(current));
-});
-
-test('getByZipAndTimestamp returns most current if two are valid', async () => {
-  await ForecastHourly.bulkCreate([lessCurrent, current]);
-  const { zip, timestamp } = current;
-
-  const result = await ForecastHourly.getByZipAndTimestamp(zip, timestamp);
-
-  expect(result).toEqual(expect.objectContaining(current));
-});
-
-test('getByZipAndTimestamp wont return stale record if maxAge passed', async () => {
-  // hack - use bulkcreate because it allows setting createdAt
-  await ForecastHourly.bulkCreate([stale]);
-  const { zip, timestamp } = stale;
-  const maxAge = 3 * 3600; // three hours
+test('getByZipAndTimestamp returns most recently updated record matching zip and timestamp', async () => {
+  ForecastHourly.bulkCreate([lessCurrent, current]);
 
   const result = await ForecastHourly.getByZipAndTimestamp(
-    zip,
-    timestamp,
-    maxAge
+    mockZip,
+    mockTimeNow
   );
 
-  expect(result).toEqual(null);
+  expect(result).toEqual(expect.objectContaining(current));
 });
+
+test('getByZipAndTimestamp queries by zip and timestamp', async () => {
+  ForecastHourly.bulkCreate([wrongZip, wrongTimestamp, lessCurrent]);
+
+  const result = await ForecastHourly.getByZipAndTimestamp(
+    mockZip,
+    mockTimeNow
+  );
+
+  expect(result).toEqual(expect.objectContaining(lessCurrent));
+});
+
+test.todo('getByZipAndTimestamp wont return stale record if maxAge passed');
