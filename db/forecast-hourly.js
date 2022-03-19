@@ -80,6 +80,14 @@ ForecastHourly.getByZipAndTimestamp = async function (zip, timestamp, maxAge) {
     timestamp: topOfHour,
   };
 
+  if (maxAge) {
+    const now = Date.now();
+    const threshold = now - maxAge * 1000;
+    where.updatedAt = {
+      [Op.gt]: threshold,
+    };
+  }
+
   const order = [['updatedAt', 'DESC']];
 
   return ForecastHourly.findOne({ where, order });

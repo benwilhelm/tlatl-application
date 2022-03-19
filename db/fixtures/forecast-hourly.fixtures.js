@@ -4,7 +4,7 @@ import {
   mockZip,
 } from '../../test-helpers/fixtures.js';
 const staleInterval = 3 * 3600; // three hours
-const staleCutoff = (mockTimeNowTopOfHour - staleInterval) * 1000;
+const staleCutoff = (mockTimeNow - staleInterval) * 1000;
 const mockTimeNowMS = mockTimeNow * 1000;
 
 export const current = {

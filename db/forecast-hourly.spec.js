@@ -51,6 +51,7 @@ test('getByZipAndTimestamp wont return stale record if maxAge passed', async () 
   await ForecastHourly.bulkCreate([stale]);
   const maxAge = 3 * 3600; // 3 hours
 
+  // threshold: stale is outside of max age
   const result = await ForecastHourly.getByZipAndTimestamp(
     mockZip,
     mockTimeNow,
@@ -58,4 +59,13 @@ test('getByZipAndTimestamp wont return stale record if maxAge passed', async () 
   );
 
   expect(result).toBeNull();
+
+  // threshold: stale is inside of max age
+  const result2 = await ForecastHourly.getByZipAndTimestamp(
+    mockZip,
+    mockTimeNow,
+    maxAge + 1
+  );
+
+  expect(result2).toEqual(expect.objectContaining(stale));
 });
