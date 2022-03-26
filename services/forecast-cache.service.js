@@ -1,4 +1,4 @@
-const MAX_AGE = 3 * 3600 * 1000; // three hours
+const MAX_AGE = 3 * 3600; // three hours
 
 export class ForecastCacheService {
   constructor({ dbClient, apiClient }) {
@@ -6,8 +6,8 @@ export class ForecastCacheService {
     this.apiClient = apiClient;
   }
 
-  getByZipAndTimestamp(zip, timestamp) {
-    const dbResult = this.dbClient.getByZipAndTimestamp(
+  async getByZipAndTimestamp(zip, timestamp) {
+    const dbResult = await this.dbClient.getByZipAndTimestamp(
       zip,
       timestamp,
       MAX_AGE

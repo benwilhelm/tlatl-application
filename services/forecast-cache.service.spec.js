@@ -2,12 +2,15 @@ import {
   ForecastCacheService,
   apiResponseToDbModel,
 } from './forecast-cache.service';
-import { current, stale } from '../db/fixtures/forecast-hourly.fixtures';
+import { db } from '../db/db';
 import {
-  responseOneDayHourly,
-  mockZip,
-  mockTimeNow,
-} from './fixtures/forecast-api.fixtures';
+  current,
+  stale,
+  notQuiteStale,
+} from '../db/fixtures/forecast-hourly.fixtures';
+import { responseOneDayHourly } from './fixtures/forecast-api.fixtures';
+import { mockZip, mockTimeNow } from '../test-helpers/fixtures';
+import { ForecastHourly } from '../db/forecast-hourly';
 
 const mockConvertedDbRow = {
   zip: mockZip,
@@ -27,37 +30,77 @@ const fakeApiClient = {
   getByZipAndTimestamp() {},
 };
 
-test('getByZipAndTimestamp() returns cached data if present', () => {
-  jest
-    .spyOn(fakeDbClient, 'getByZipAndTimestamp')
-    .mockImplementation(() => current);
+const syncDb = () => db.sync({ force: true });
+const truncateTable = async () => {
+  await ForecastHourly.destroy({ where: {}, truncate: true });
+};
+
+beforeAll(async () => {
+  await syncDb();
+  jest.useFakeTimers();
+  jest.setSystemTime(new Date(mockTimeNow * 1000));
+});
+afterAll(() => {
+  jest.useRealTimers();
+});
+beforeEach(truncateTable);
+
+test('getByZipAndTimestamp() returns cached data if present', async () => {
+  ForecastHourly.bulkCreate([current]);
   jest.spyOn(fakeApiClient, 'getByZipAndTimestamp');
   const cache = new ForecastCacheService({
-    dbClient: fakeDbClient,
+    dbClient: ForecastHourly,
     apiClient: fakeApiClient,
   });
 
-  const result = cache.getByZipAndTimestamp(mockZip, mockTimeNow);
+  const result = await cache.getByZipAndTimestamp(mockZip, mockTimeNow);
 
-  expect(result).toEqual(current);
+  expect(result).toEqual(expect.objectContaining(current));
   expect(fakeApiClient.getByZipAndTimestamp).not.toHaveBeenCalled();
 });
 
-test('getByZipAndTimestamp() returns fresh data from API if no cached data present', () => {
-  jest
-    .spyOn(fakeDbClient, 'getByZipAndTimestamp')
-    .mockImplementation(() => null);
+test('getByZipAndTimestamp() returns fresh data from API if no cached data present', async () => {
   jest
     .spyOn(fakeApiClient, 'getByZipAndTimestamp')
     .mockImplementation(() => responseOneDayHourly);
   const cache = new ForecastCacheService({
-    dbClient: fakeDbClient,
+    dbClient: ForecastHourly,
     apiClient: fakeApiClient,
   });
 
-  const result = cache.getByZipAndTimestamp(mockZip, mockTimeNow);
+  const result = await cache.getByZipAndTimestamp(mockZip, mockTimeNow);
 
   expect(result).toEqual(mockConvertedDbRow);
+});
+
+test('getByZipAndTimestamp returns from API if stale data present', async () => {
+  ForecastHourly.bulkCreate([stale]);
+  jest
+    .spyOn(fakeApiClient, 'getByZipAndTimestamp')
+    .mockImplementation(() => responseOneDayHourly);
+  const cache = new ForecastCacheService({
+    dbClient: ForecastHourly,
+    apiClient: fakeApiClient,
+  });
+
+  const result = await cache.getByZipAndTimestamp(mockZip, mockTimeNow);
+
+  expect(result).toEqual(mockConvertedDbRow);
+});
+
+test('getByZipAndTimestamp returns from DB if at boundary of maxAge', async () => {
+  ForecastHourly.bulkCreate([notQuiteStale]);
+  jest
+    .spyOn(fakeApiClient, 'getByZipAndTimestamp')
+    .mockImplementation(() => responseOneDayHourly);
+  const cache = new ForecastCacheService({
+    dbClient: ForecastHourly,
+    apiClient: fakeApiClient,
+  });
+
+  const result = await cache.getByZipAndTimestamp(mockZip, mockTimeNow);
+
+  expect(result).toEqual(expect.objectContaining(notQuiteStale));
 });
 
 test('apiResponseToDbModel convert api response to DB Model', () => {

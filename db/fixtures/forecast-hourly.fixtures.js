@@ -55,6 +55,18 @@ export const lessCurrent = {
   updatedAt: new Date(mockTimeNowMS - 1000),
 };
 
+export const notQuiteStale = {
+  zip: mockZip,
+  timestamp: mockTimeNowTopOfHour,
+  windSpeed: 10,
+  windDirection: 'N',
+  windDegree: 277,
+  temperature: 65,
+  skies: 'DB RESPONSE - Not Quite Stale',
+  createdAt: new Date(staleCutoff + 1),
+  updatedAt: new Date(staleCutoff + 1),
+};
+
 export const stale = {
   zip: mockZip,
   timestamp: mockTimeNowTopOfHour,
