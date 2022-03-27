@@ -5,5 +5,7 @@
     "^.+\\.js$": "babel-jest",
     "^.+\\.mjs$": "babel-jest"
   },
-  "testRegex": "((\\.|/*.)(spec))\\.js?$"
+  "testRegex": "((\\.|/*.)(spec))\\.js?$",
+  "setupFiles": ["./test-setup.js"],
+  "setupFilesAfterEnv": ["./services/test-helpers/setup-mock-server.js"]
 }
