@@ -1021,7 +1021,7 @@ export const responseOneDayHourly = {
   },
 };
 
-export const responseTenDayHourly = {
+export const responseThreeDayHourly = {
   location: {
     name: 'Chicago',
     region: 'Illinois',
@@ -1107,7 +1107,7 @@ export const responseTenDayHourly = {
             temp_f: 34.9,
             is_day: 0,
             condition: {
-              text: 'Blowing snow',
+              text: 'API Response Hour 1',
               icon: '//cdn.weatherapi.com/weather/64x64/night/227.png',
               code: 1114,
             },
@@ -1146,7 +1146,7 @@ export const responseTenDayHourly = {
             temp_f: 34.7,
             is_day: 0,
             condition: {
-              text: 'Blizzard',
+              text: 'API Response Hour 2',
               icon: '//cdn.weatherapi.com/weather/64x64/night/230.png',
               code: 1117,
             },

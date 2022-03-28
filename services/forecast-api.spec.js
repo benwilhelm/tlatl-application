@@ -1,7 +1,7 @@
 import ForecastApiClient from './forecast-api.js';
 import { mockZip } from '../test-helpers/fixtures';
 import {
-  responseTenDayHourly,
+  responseThreeDayHourly,
   mockApiKey,
 } from './fixtures/forecast-api.fixtures';
 
@@ -10,7 +10,7 @@ test('should fetch ten-day forecast by zip', async () => {
 
   const response = await client.getForecastByZip(mockZip);
 
-  expect(response).toEqual(responseTenDayHourly);
+  expect(response).toEqual(responseThreeDayHourly);
 });
 
 test('should throws 401 with bad API Key', async () => {

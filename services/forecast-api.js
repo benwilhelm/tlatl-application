@@ -9,7 +9,7 @@ export default class ForecastApiClient {
   }
   async getForecastByZip(zip) {
     const url = '/forecast.json';
-    const query = `key=${this.apiKey}&q=${zip}&days=10&aqi=no&alerts=no`;
+    const query = `key=${this.apiKey}&q=${zip}&days=3&aqi=no&alerts=no`;
     const response = await this.client.get(`${url}?${query}`);
     return response.data;
   }

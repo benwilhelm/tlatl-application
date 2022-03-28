@@ -2,7 +2,7 @@ import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import { mockZip } from '../../test-helpers/fixtures';
 import {
-  responseTenDayHourly,
+  responseThreeDayHourly,
   mockApiKey,
 } from '../fixtures/forecast-api.fixtures';
 
@@ -21,8 +21,8 @@ const handlers = [
       return res(ctx.status(401), ctx.json({ error: mock401Error }));
     }
 
-    if (zip === mockZip && days === 10) {
-      return res(ctx.json(responseTenDayHourly));
+    if (zip === mockZip && days === 3) {
+      return res(ctx.json(responseThreeDayHourly));
     }
 
     throw new Error(`unrecognized request: ${req.url}`);

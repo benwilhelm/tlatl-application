@@ -12,19 +12,20 @@ export class ForecastCacheService {
       timestamp,
       MAX_AGE
     );
-
-    if (!dbResult) {
-      const apiResult = this.apiClient.getByZipAndTimestamp(zip, timestamp);
-      return apiResponseToDbModel(apiResult, zip);
+    if (dbResult) {
+      return dbResult;
     }
 
-    return dbResult;
+    const apiResult = await this.apiClient.getForecastByZip(zip);
+    const hours = apiResponseToHoursArray(apiResult, zip);
+    this.dbClient.bulkCreate(hours);
+    return this.dbClient.getByZipAndTimestamp(zip, timestamp, MAX_AGE);
   }
 }
 
-export function apiResponseToDbModel(apiResponse, zip) {
-  const hour = apiResponse.forecast.forecastday[0].hour[0];
-  return {
+export function apiResponseToHoursArray(apiResponse, zip) {
+  const hours = apiResponse.forecast.forecastday.map((d) => d.hour).flat();
+  return hours.map((hour) => ({
     zip,
     timestamp: hour.time_epoch,
     temperature: hour.temp_f,
@@ -32,5 +33,5 @@ export function apiResponseToDbModel(apiResponse, zip) {
     windDirection: hour.wind_dir,
     windDegree: hour.wind_degree,
     skies: hour.condition.text,
-  };
+  }));
 }
