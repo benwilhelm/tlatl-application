@@ -11,31 +11,13 @@ import {
 import {
   responseOneDayHourly,
   responseThreeDayHourly,
+  mockConvertedHour1,
+  mockConvertedHour2,
   mockApiKey,
 } from './fixtures/forecast-api.fixtures';
 import { mockZip, mockTimeNow } from '../test-helpers/fixtures';
 import { ForecastHourly } from '../db/forecast-hourly';
 import ForecastApiClient from './forecast-api';
-
-const mockConvertedHour1 = {
-  zip: mockZip,
-  timestamp: 1648270800,
-  windSpeed: 19.2,
-  windDirection: 'WNW',
-  windDegree: 298,
-  temperature: 34.9,
-  skies: 'API Response Hour 1',
-};
-
-const mockConvertedHour2 = {
-  zip: mockZip,
-  timestamp: 1648274400,
-  windSpeed: 19.0,
-  windDirection: 'WNW',
-  windDegree: 303,
-  temperature: 34.7,
-  skies: 'API Response Hour 2',
-};
 
 const fakeApiClient = {
   getByZipAndTimestamp() {},

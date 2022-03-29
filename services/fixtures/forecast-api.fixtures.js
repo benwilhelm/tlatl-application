@@ -1,4 +1,26 @@
+import { mockZip } from '../../test-helpers/fixtures';
+
 export const mockApiKey = 'test-api-key';
+
+export const mockConvertedHour1 = {
+  zip: mockZip,
+  timestamp: 1648270800,
+  windSpeed: 19.2,
+  windDirection: 'WNW',
+  windDegree: 298,
+  temperature: 34.9,
+  skies: 'API Response Hour 1',
+};
+
+export const mockConvertedHour2 = {
+  zip: mockZip,
+  timestamp: 1648274400,
+  windSpeed: 19.0,
+  windDirection: 'WNW',
+  windDegree: 303,
+  temperature: 34.7,
+  skies: 'API Response Hour 2',
+};
 
 export const responseOneDayHourly = {
   location: {
