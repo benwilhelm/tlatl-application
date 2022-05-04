@@ -22,6 +22,19 @@ beforeEach(async () => {
   await ForecastHourly.destroy({ where: {}, truncate: true });
 });
 
+test('GET /forecast returns 500 if it encounters an error', async () => {
+  jest.spyOn(ForecastHourly, 'getByZipAndTimestamp').mockImplementation(() => {
+    throw new Error('oh no!');
+  });
+  const api = request(app);
+
+  const response = await suppressErrorOutput(() =>
+    api.get(`/forecast?zip=${mockZip}&ts=1111111111`)
+  );
+
+  expect(response.status).toEqual(500);
+});
+
 test('GET /forecast with warm cache returns DB row for zip and timestamp', async () => {
   const api = request(app);
   await ForecastHourly.bulkCreate([current]);
@@ -50,19 +63,6 @@ test('GET /forecast with cold cache returns API response for zip and timestamp',
   const response2 = await api.get(`/forecast?zip=${zip}&ts=${ts2}`);
   expect(response2.status).toEqual(200);
   expect(response2.body).toEqual(expect.objectContaining(mockConvertedHour2));
-});
-
-test('GET /forecast returns 500 if it encounters an error', async () => {
-  jest.spyOn(ForecastHourly, 'getByZipAndTimestamp').mockImplementation(() => {
-    throw new Error('oh no!');
-  });
-  const api = request(app);
-
-  const response = await suppressErrorOutput(() =>
-    api.get(`/forecast?zip=${mockZip}&ts=1111111111`)
-  );
-
-  expect(response.status).toEqual(500);
 });
 
 function stringifyDates(obj) {
