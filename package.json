@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon index.js",
+    "start:server": "nodemon index.js",
+    "start:client": "parcel client/index.html",
     "test": "jest",
     "test:watch": "jest --watch"
   },
@@ -17,6 +18,8 @@
     "body-parser": "^1.19.1",
     "express": "^4.17.2",
     "morgan": "^1.10.0",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
     "sequelize": "^6.13.0",
     "sqlite3": "^5.0.2",
     "winston": "^3.4.0"
@@ -25,9 +28,12 @@
     "@babel/core": "^7.16.7",
     "@babel/node": "^7.16.8",
     "@babel/preset-env": "^7.16.8",
+    "@parcel/babel-preset-env": "^2.5.0",
+    "@testing-library/react": "^13.2.0",
     "jest": "^27.4.7",
     "msw": "^0.39.2",
     "nodemon": "^2.0.15",
+    "parcel": "^2.5.0",
     "supertest": "^6.2.1"
   }
 }
