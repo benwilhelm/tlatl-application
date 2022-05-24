@@ -3,7 +3,6 @@ import { useState, useRef } from 'react';
 export function useRequest(client, req) {
   const controller = useRef(null);
   const [loading, setLoading] = useState(false);
-  const [status, setstatus] = useState(null);
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
 
@@ -28,7 +27,6 @@ export function useRequest(client, req) {
 
   return {
     loading,
-    status,
     response,
     error,
     makeRequest: async (reqOverrides) => {

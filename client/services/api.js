@@ -8,6 +8,6 @@ export function createClient({ baseURL }) {
 }
 
 export const getInstance = (() => {
-  const instance = createClient({ baseURL: 'http://example.com' });
+  const instance = createClient({ baseURL: 'http://localhost:3000' });
   return () => instance;
 })();

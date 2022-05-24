@@ -20,10 +20,6 @@ const handlers = [
     return res(ctx.status(200), ctx.json({ hello }));
   }),
 
-  // rest.post(`${domain}/200`, async(req, res, ctx) => {
-
-  // })
-
   rest.get(`${domain}/404`, async (req, res, ctx) => {
     return res(ctx.status(404), ctx.json(error404));
   }),
