@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useRequest } from './useRequest.js';
 import { createClient } from '../services/api.js';

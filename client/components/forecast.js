@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { getInstance } from '../services/api.js';
 
 const apiClient = getInstance();
 import { useRequest } from '../hooks/useRequest.js';
 
 export const Forecast = (props) => {
+  const [zip, setZip] = useState('');
   const { makeRequest, loading, response } = useRequest(apiClient, {
     method: 'get',
     url: '/forecast',
@@ -16,7 +17,12 @@ export const Forecast = (props) => {
         className="form row form--forecast"
         onSubmit={(e) => {
           e.preventDefault();
-          makeRequest();
+          makeRequest({
+            params: {
+              zip,
+              ts: Date.now() / 1000,
+            },
+          });
         }}
       >
         <div className="form-floating col-auto">
@@ -26,6 +32,8 @@ export const Forecast = (props) => {
             id="zip"
             className="form-control"
             placeholder="10101"
+            value={zip}
+            onChange={(e) => setZip(e.target.value)}
           />
           <label htmlFor="zip">ZIP</label>
         </div>
@@ -37,7 +45,6 @@ export const Forecast = (props) => {
           />
         </div>
       </form>
-
       {!loading && !response && <InitialPrompt />}
       {loading && <LoadingIndicator />}
       {response?.status === 200 && (
@@ -55,7 +62,7 @@ const LoadingIndicator = () => {
   return <p>Fetching...</p>;
 };
 
-const ForecastResponse = (forecast) => {
+const ForecastResponse = ({ forecast }) => {
   return (
     <div>
       <h2 className="forecast--skies">Skies: {forecast.skies}</h2>

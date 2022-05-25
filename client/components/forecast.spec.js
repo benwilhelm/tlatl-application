@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Forecast } from './forecast.js';
@@ -14,10 +10,10 @@ afterAll(() => server.close());
 describe('<Forecast />', () => {
   test('should initially display empty forecast', () => {
     const component = render(<Forecast />);
-    const text = screen.getByText(/enter your zip code/i);
-    expect(text).toBeTruthy();
+    screen.getByText(/enter your zip code/i);
   });
-  test.only('should fetch forecast with valid zip', async () => {
+
+  test('should fetch forecast with valid zip', async () => {
     const component = render(<Forecast />);
 
     const input = component.getByLabelText('ZIP');
@@ -32,7 +28,7 @@ describe('<Forecast />', () => {
     });
 
     await waitFor(() => {
-      component.getByText(/skies/i);
+      component.getByText(/skies: DB Response - Current/i);
     });
   });
   test.todo('should display...something... for zip with no info');

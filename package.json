@@ -14,7 +14,8 @@
     "start:server": "source server/env/development.env.sh && nodemon server/index.js",
     "start:client": "parcel client/index.html",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:client": "npm run test -- --projects client",
+    "test:server": "npm run test -- --projects server"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +23,7 @@
   "dependencies": {
     "axios": "^0.26.1",
     "body-parser": "^1.19.1",
+    "cors": "^2.8.5",
     "express": "^4.17.2",
     "morgan": "^1.10.0",
     "react": "^18.1.0",

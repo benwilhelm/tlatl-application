@@ -3,5 +3,9 @@
   "rootDir": ".",
   "collectCoverage": false,
   "moduleFileExtensions": ["js", "mjs"],
-  "testRegex": "((\\.|/*.)(spec))\\.js?$"
+  "testRegex": "((\\.|/*.)(spec))\\.js?$",
+  "transform": {
+    "\\.jsx?$": ["babel-jest", { "configFile": "./client/jest.babelrc" }]
+  },
+  "testEnvironment": "jsdom"
 }

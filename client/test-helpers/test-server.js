@@ -13,6 +13,9 @@ const handlers = [
 
     await delay(10);
 
+    if (!zip || !ts) {
+      return res(ctx.status(400));
+    }
     return res(ctx.status(200), ctx.json(current));
   }),
 ];
