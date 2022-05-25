@@ -1,0 +1,7 @@
+{
+  "displayName": "client",
+  "rootDir": ".",
+  "collectCoverage": false,
+  "moduleFileExtensions": ["js", "mjs"],
+  "testRegex": "((\\.|/*.)(spec))\\.js?$"
+}

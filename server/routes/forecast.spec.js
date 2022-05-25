@@ -2,6 +2,7 @@ import request from 'supertest';
 import app from '../app';
 import { db, ForecastHourly } from '../db/index.js';
 import { mockZip, mockTimeNow } from '../test-helpers/fixtures.js';
+import { suppressErrorOutput } from '../test-helpers/util.js';
 import { current, stale } from '../db/fixtures/forecast-hourly.fixtures';
 import {
   mockConvertedHour1,
@@ -52,12 +53,16 @@ test('GET /forecast with cold cache returns API response for zip and timestamp',
 });
 
 test('GET /forecast returns 500 if it encounters an error', async () => {
-  jest.spyOn(ForecastHourly, 'getByZipAndTimestamp').mockImplementation(() => {
-    throw new Error('oh no!');
-  });
+  jest
+    .spyOn(ForecastHourly, 'getByZipAndTimestamp')
+    .mockImplementationOnce(() => {
+      throw new Error('oh no!');
+    });
   const api = request(app);
 
-  const response = await api.get(`/forecast?zip=${mockZip}&ts=1111111111`);
+  const response = await suppressErrorOutput(() => {
+    return api.get(`/forecast?zip=${mockZip}&ts=1111111111`);
+  });
 
   expect(response.status).toEqual(500);
 });

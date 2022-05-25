@@ -1,4 +1,6 @@
 {
+  "displayName": "server",
+  "rootDir": ".",
   "collectCoverage": false,
   "moduleFileExtensions": ["js", "mjs"],
   "transform": {
