@@ -1,6 +1,6 @@
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
-import { current } from '../../db/fixtures/forecast-hourly.fixtures.js';
+import { current } from '../../server/db/fixtures/forecast-hourly.fixtures.js';
 
 const delay = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
