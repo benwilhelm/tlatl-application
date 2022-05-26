@@ -1,6 +1,7 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { Forecast } from './forecast.js';
+import { render, screen, act, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { Forecast } from './forecast.jsx';
 import { server } from '../test-helpers/test-server.js';
 
 beforeAll(() => server.listen());
@@ -13,15 +14,22 @@ describe('<Forecast />', () => {
     screen.getByText(/enter your zip code/i);
   });
 
+  test('should not submit without a zip', async () => {
+    const { user, component, form, input, submit } = componentFactory();
+    const onRequest = jest.fn();
+    server.events.on('request:start', onRequest);
+
+    await user.click(submit);
+
+    expect(onRequest).not.toHaveBeenCalled();
+  });
+
   test('should fetch forecast with valid zip', async () => {
-    const component = render(<Forecast />);
+    const { user, component, input, submit } = componentFactory();
+    input.focus();
+    user.keyboard('60660');
 
-    const input = component.getByLabelText('ZIP');
-    const submit = component.getByText('Submit', { selector: 'input' });
-
-    // @TODO - SWAP THIS OUT FOR USER-EVENT
-    fireEvent.change(input, { target: { value: '60660' } });
-    fireEvent.click(submit);
+    await user.click(submit);
 
     await waitFor(() => {
       component.getByText(/fetching/i);
@@ -31,5 +39,23 @@ describe('<Forecast />', () => {
       component.getByText(/skies: DB Response - Current/i);
     });
   });
+
   test.todo('should display...something... for zip with no info');
 });
+
+function componentFactory() {
+  const user = userEvent.setup();
+  const component = render(<Forecast />);
+
+  const input = component.getByLabelText('ZIP');
+  const submit = component.getByText('Submit', { selector: 'input' });
+  const form = component.getByRole('form');
+
+  return {
+    user,
+    form,
+    component,
+    input,
+    submit,
+  };
+}

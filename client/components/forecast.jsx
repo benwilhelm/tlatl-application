@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+// import DateTimePicker from 'react-datetime-picker';
 import { getInstance } from '../services/api.js';
 
 const apiClient = getInstance();
@@ -14,9 +15,12 @@ export const Forecast = (props) => {
   return (
     <div>
       <form
+        aria-label="form"
         className="form row form--forecast"
         onSubmit={(e) => {
           e.preventDefault();
+          if (!zip) return;
+
           makeRequest({
             params: {
               zip,
@@ -30,6 +34,7 @@ export const Forecast = (props) => {
             type="text"
             name="zip"
             id="zip"
+            required
             className="form-control"
             placeholder="10101"
             value={zip}
@@ -37,6 +42,10 @@ export const Forecast = (props) => {
           />
           <label htmlFor="zip">ZIP</label>
         </div>
+
+        {/* <div className="col-auto">
+          <DateTimePicker format="y-MM-dd h:mm a" />
+        </div> */}
         <div className="col-auto">
           <input
             className="form-control btn btn-primary submit"

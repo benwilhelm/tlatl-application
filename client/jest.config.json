@@ -2,8 +2,8 @@
   "displayName": "client",
   "rootDir": ".",
   "collectCoverage": false,
-  "moduleFileExtensions": ["js", "mjs"],
-  "testRegex": "((\\.|/*.)(spec))\\.js?$",
+  "moduleFileExtensions": ["js", "mjs", "jsx"],
+  "testRegex": "((\\.|/*.)(spec))\\.jsx?$",
   "transform": {
     "\\.jsx?$": ["babel-jest", { "configFile": "./client/jest.babelrc" }]
   },
