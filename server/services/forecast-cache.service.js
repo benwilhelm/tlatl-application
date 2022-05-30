@@ -12,13 +12,17 @@ export class ForecastCacheService {
       timestamp,
       MAX_AGE
     );
+    console.log('dbResult', dbResult);
     if (dbResult) {
+      console.log('returning dbResult');
       return dbResult;
     }
 
     const apiResult = await this.apiClient.getForecastByZip(zip);
+    console.log('apiResult', apiResult);
     const hours = apiResponseToHoursArray(apiResult, zip);
-    this.dbClient.bulkCreate(hours);
+    console.log('hours', hours);
+    await this.dbClient.bulkCreate(hours);
     return this.dbClient.getByZipAndTimestamp(zip, timestamp, MAX_AGE);
   }
 }

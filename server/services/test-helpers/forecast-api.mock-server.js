@@ -1,10 +1,10 @@
 import { rest } from 'msw';
-import { setupServer } from 'msw/node';
-import { mockZip } from '../../test-helpers/fixtures';
+import { setupServer } from 'msw/node/lib/index.js';
+import { mockZip } from '../../test-helpers/fixtures.js';
 import {
   responseThreeDayHourly,
   mockApiKey,
-} from '../fixtures/forecast-api.fixtures';
+} from '../fixtures/forecast-api.fixtures.js';
 
 export const mock401Error = {
   code: 2006,

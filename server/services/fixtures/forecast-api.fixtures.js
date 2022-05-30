@@ -1,4 +1,4 @@
-import { mockZip } from '../../test-helpers/fixtures';
+import { mockZip } from '../../test-helpers/fixtures.js';
 
 export const mockApiKey = 'test-api-key';
 
