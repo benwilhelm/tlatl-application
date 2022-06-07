@@ -36,7 +36,7 @@ describe('<Forecast />', () => {
     });
 
     await waitFor(() => {
-      component.getByText(/skies: DB Response - Current/i);
+      component.getByRole('heading', { name: /DB Response - Current/i });
     });
   });
 
@@ -48,7 +48,7 @@ function componentFactory() {
   const component = render(<Forecast />);
 
   const input = component.getByLabelText('ZIP');
-  const submit = component.getByText('Submit', { selector: 'input' });
+  const submit = component.getByRole('button', { name: /submit/i });
   const form = component.getByRole('form');
 
   return {

@@ -15,7 +15,7 @@ export const Forecast = (props) => {
   return (
     <div>
       <form
-        aria-label="form"
+        role="form"
         className="form row form--forecast"
         onSubmit={(e) => {
           e.preventDefault();
