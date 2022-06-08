@@ -16,7 +16,8 @@
     "start:client": "parcel client/index.html",
     "test": "jest",
     "test:client": "npm run test -- --projects client",
-    "test:server": "npm run test -- --projects server"
+    "test:server": "npm run test -- --projects server",
+    "setupDevDb": "source server/env/development.env.sh && node tasks/updateDb.js"
   },
   "keywords": [],
   "author": "",

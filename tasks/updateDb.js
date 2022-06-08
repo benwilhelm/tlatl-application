@@ -1,4 +1,4 @@
-import { db } from '../db/index.js';
+import { db } from '../server/db/index.js';
 
 (async () => {
   await db.sync({ alter: true });
