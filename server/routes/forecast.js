@@ -15,7 +15,6 @@ router.get('/', async (req, res, next) => {
     const ts = +req.query.ts;
 
     const hour = await cacheService.getByZipAndTimestamp(zip, ts);
-    console.log('returned from cache', hour);
     res.json(hour);
   } catch (err) {
     console.error(err);
