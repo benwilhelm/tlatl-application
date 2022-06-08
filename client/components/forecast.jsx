@@ -1,80 +1,57 @@
-import React, { useState } from 'react';
-// import DateTimePicker from 'react-datetime-picker';
-import { getInstance } from '../services/api.js';
+import React from 'react';
 
-const apiClient = getInstance();
-import { useRequest } from '../hooks/useRequest.js';
+export const Forecast = ({ forecast }) => {
+  return (
+    <div>
+      <p>Forecast for {forecast.zip}</p>
+      <p>{formatSecondsToTime(forecast.timestamp)}</p>
+      <p>Skies are {forecast.skies}</p>
+      <p>
+        Winds from the{' '}
+        {displayWindData(forecast.windSpeed, forecast.windDirection)}
+      </p>
+      <p>Temperature: {forecast.temperature}&deg;F</p>
+    </div>
+  );
+};
 
-export const Forecast = (props) => {
-  const [zip, setZip] = useState('');
-  const { makeRequest, loading, response } = useRequest(apiClient, {
-    method: 'get',
-    url: '/forecast',
+function formatSecondsToTime(seconds) {
+  const ts = seconds * 1000;
+  const dateTime = new Date(ts);
+
+  const dateString = dateTime.toLocaleDateString('en-us', {
+    month: 'short',
+    day: 'numeric',
+    weekday: 'short',
   });
 
-  return (
-    <div>
-      <form
-        role="form"
-        className="form row form--forecast"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (!zip) return;
+  const timeString = dateTime.toLocaleTimeString('en-us', {
+    hour: 'numeric',
+    minute: '2-digit',
+  });
 
-          makeRequest({
-            params: {
-              zip,
-              ts: Date.now() / 1000,
-            },
-          });
-        }}
-      >
-        <div className="form-floating col-auto">
-          <input
-            type="text"
-            name="zip"
-            id="zip"
-            required
-            className="form-control"
-            placeholder="10101"
-            value={zip}
-            onChange={(e) => setZip(e.target.value)}
-          />
-          <label htmlFor="zip">ZIP</label>
-        </div>
+  return `${dateString} at ${timeString}`;
+}
 
-        {/* <div className="col-auto">
-          <DateTimePicker format="y-MM-dd h:mm a" />
-        </div> */}
-        <div className="col-auto">
-          <input
-            className="form-control btn btn-primary submit"
-            type="submit"
-            value="Submit"
-          />
-        </div>
-      </form>
-      {!loading && !response && <InitialPrompt />}
-      {loading && <LoadingIndicator />}
-      {response?.status === 200 && (
-        <ForecastResponse forecast={response.payload} />
-      )}
-    </div>
-  );
-};
+function displayWindData(mph, direction) {
+  const directions = {
+    N: 'North',
+    E: 'East',
+    S: 'South',
+    W: 'West',
+    NE: 'Northeast',
+    NW: 'Northwest',
+    SE: 'Southeast',
+    SW: 'Southwest',
+    NNE: 'North-Northeast',
+    ENE: 'East-Northeast',
+    SSE: 'South-Southeast',
+    ESE: 'East-Southeast',
+    SSW: 'South-Southwest',
+    WSW: 'West-Southwest',
+    WNW: 'West-Northwest',
+    NNW: 'North-Northwest',
+  };
 
-const InitialPrompt = () => {
-  return <p>Enter your ZIP code to get a wind forecast.</p>;
-};
-
-const LoadingIndicator = () => {
-  return <p>Fetching...</p>;
-};
-
-const ForecastResponse = ({ forecast }) => {
-  return (
-    <div>
-      <h2 className="forecast--skies">Skies: {forecast.skies}</h2>
-    </div>
-  );
-};
+  return `${directions[direction]} at ${mph}mph`;
+}

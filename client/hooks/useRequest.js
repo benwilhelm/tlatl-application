@@ -1,12 +1,35 @@
-import { useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
-export function useRequest(client, req) {
+export function useRequest(client, baseRequest) {
   const controller = useRef(null);
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
+  const [request, setRequest] = useState(null);
+
+  useEffect(() => {
+    // console.log('running effect', request);
+    if (request === null) return;
+    const reqCopy = { ...request };
+    const abortController = new AbortController();
+    // console.log('making request', request);
+    setLoading(true);
+    client
+      .request({
+        ...request,
+        signal: abortController.signal,
+      })
+      .then(processResponse)
+      .catch(processError);
+
+    return () => {
+      // console.log('aborting', reqCopy);
+      abortController.abort();
+    };
+  }, [request]);
 
   function processResponse(res) {
+    // console.log('processing response', res.data);
     setLoading(false);
     setError(null);
     setResponse({
@@ -16,6 +39,7 @@ export function useRequest(client, req) {
   }
 
   function processError(err) {
+    // console.log('processing error', err);
     setLoading(false);
     if (err.response?.status) {
       processResponse(err.response);
@@ -29,32 +53,13 @@ export function useRequest(client, req) {
     loading,
     response,
     error,
-    makeRequest: async (reqOverrides) => {
-      setLoading(true);
-      try {
-        controller.current.abort();
-      } catch {}
-
-      try {
-        controller.current = new AbortController();
-        const response = await client.request({
-          ...req,
-          ...reqOverrides,
-          signal: controller.current.signal,
-        });
-        processResponse(response);
-      } catch (err) {
-        processError(err);
-      } finally {
-        controller.current = null;
-        setLoading(false);
-      }
+    request,
+    makeRequest: (reqOverrides = {}) => {
+      // console.log('making request', reqOverrides);
+      setRequest({ ...baseRequest, ...reqOverrides });
     },
     cancel: () => {
-      controller.current.abort();
-      setLoading(false);
-      setResponse(null);
-      setError(null);
+      setRequest(null);
     },
   };
 }

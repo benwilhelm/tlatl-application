@@ -11,7 +11,7 @@
     ]
   },
   "scripts": {
-    "start:server": "source server/env/development.env.sh && nodemon server/index.js -i **/*.spec.js",
+    "start:server": "source server/env/development.env.sh && nodemon server/index.js -i **/*.spec.js,client,dist",
     "start:server:test": "source server/env/test.env.sh && NODE_ENV=test nodemon server/index.js -i **/*.spec.js",
     "start:client": "parcel client/index.html",
     "test": "jest",

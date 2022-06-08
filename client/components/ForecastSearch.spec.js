@@ -1,21 +1,21 @@
 import React from 'react';
 import { render, screen, act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Forecast } from './forecast.jsx';
+import { ForecastSearch } from './ForecastSearch.jsx';
 import { server } from '../test-helpers/test-server.js';
 
 beforeAll(() => server.listen());
 beforeEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-describe('<Forecast />', () => {
+describe('<ForecastSearch />', () => {
   test('should initially display empty forecast', () => {
-    const component = render(<Forecast />);
+    const component = render(<ForecastSearch />);
     screen.getByText(/enter your zip code/i);
   });
 
   test('should not submit without a zip', async () => {
-    const { user, component, form, input, submit } = componentFactory();
+    const { user, submit } = componentFactory();
     const onRequest = jest.fn();
     server.events.on('request:start', onRequest);
 
@@ -36,7 +36,7 @@ describe('<Forecast />', () => {
     });
 
     await waitFor(() => {
-      component.getByRole('heading', { name: /DB Response - Current/i });
+      component.getByText(/DB Response - Current/i);
     });
   });
 
@@ -45,7 +45,7 @@ describe('<Forecast />', () => {
 
 function componentFactory() {
   const user = userEvent.setup();
-  const component = render(<Forecast />);
+  const component = render(<ForecastSearch />);
 
   const input = component.getByLabelText('ZIP');
   const submit = component.getByRole('button', { name: /submit/i });
