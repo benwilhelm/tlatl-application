@@ -9,18 +9,19 @@ afterAll(() => server.close());
 
 const apiClient = getApiClient();
 
-const getForecastByZip = (zip) =>
-  apiClient.get('/forecast', {
+const getForecastByZip = async (zip) => {
+  return apiClient.get('/forecast', {
     params: {
       zip,
       ts: Math.floor(Date.now() / 1000),
     },
   });
+};
 
 export const ForecastSearch = (props) => {
-  const [zip, setZip] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(false);
   const [forecast, setForecast] = useState(null);
+  const [zip, setZip] = useState('');
 
   return (
     <div>
@@ -29,11 +30,10 @@ export const ForecastSearch = (props) => {
         className="form row form--forecast"
         onSubmit={async (e) => {
           e.preventDefault();
-          setLoading(true);
-          setForecast(null);
+          setFetching(true);
           const rslt = await getForecastByZip(zip);
           setForecast(rslt.data);
-          setLoading(false);
+          setFetching(false);
         }}
       >
         <div className="form-floating col-auto">
@@ -44,6 +44,7 @@ export const ForecastSearch = (props) => {
             required
             className="form-control"
             placeholder="10101"
+            value={zip}
             onChange={(e) => setZip(e.target.value)}
           />
           <label htmlFor="zip">ZIP</label>
@@ -57,8 +58,8 @@ export const ForecastSearch = (props) => {
           />
         </div>
       </form>
-      {!loading && !forecast && <InitialPrompt />}
-      {loading && <LoadingIndicator />}
+      {!fetching && !forecast && <InitialPrompt />}
+      {fetching && <LoadingIndicator />}
       {forecast && <Forecast forecast={forecast} />}
     </div>
   );
