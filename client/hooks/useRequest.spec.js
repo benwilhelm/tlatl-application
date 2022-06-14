@@ -33,7 +33,45 @@ test('sets fetching while request is in flight, then resolves', async () => {
   });
 });
 
-test.todo('sets error and fetching=false when request fails');
+test('sets error and fetching=false for generic error', async () => {
+  const expectedError = { error: 'oh no' };
+  const spy = jest.spyOn(axiosClient, 'request');
+  spy.mockImplementationOnce(() => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => reject(expectedError), 10);
+    });
+  });
+
+  const hook = requestFactory(axiosClient);
+  const { makeRequest } = hook.current;
+
+  expect(hook.current.fetching).toEqual(false);
+
+  // act
+  act(() => {
+    makeRequest();
+  });
+  expectIsFetching(hook);
+
+  await waitFor(() => {
+    expectErroredWith(hook, expectedError);
+  });
+});
+
+test('sets error with status and fetching=false when request returns non-200', async () => {
+  const expectedError = { status: 404, data: { message: 'not found' } };
+  const hook = requestFactory(axiosClient, { url: '/404' });
+  const { makeRequest } = hook.current;
+
+  act(() => {
+    makeRequest();
+  });
+  expectIsFetching(hook);
+
+  await waitFor(() => {
+    expectErroredWith(hook, expectedError);
+  });
+});
 
 function requestFactory(axiosClient, reqOverrides = {}) {
   const reqDefaults = {

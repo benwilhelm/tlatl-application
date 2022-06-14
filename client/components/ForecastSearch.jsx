@@ -2,10 +2,7 @@ import React, { useState } from 'react';
 import { getInstance as getApiClient } from '../services/api.js';
 import { Forecast } from './Forecast.jsx';
 import { server } from '../test-helpers/test-server.js';
-
-beforeAll(() => server.listen());
-beforeEach(() => server.resetHandlers());
-afterAll(() => server.close());
+import { useRequest } from '../hooks/useRequest.js';
 
 const apiClient = getApiClient();
 
@@ -19,9 +16,15 @@ const getForecastByZip = async (zip) => {
 };
 
 export const ForecastSearch = (props) => {
-  const [fetching, setFetching] = useState(false);
-  const [forecast, setForecast] = useState(null);
   const [zip, setZip] = useState('');
+  const { fetching, response, error, makeRequest } = useRequest(apiClient, {
+    url: '/forecast',
+    params: {
+      zip,
+      ts: Math.floor(Date.now() / 1000),
+    },
+  });
+  const forecast = response?.data;
 
   return (
     <div>
@@ -30,10 +33,7 @@ export const ForecastSearch = (props) => {
         className="form row form--forecast"
         onSubmit={async (e) => {
           e.preventDefault();
-          setFetching(true);
-          const rslt = await getForecastByZip(zip);
-          setForecast(rslt.data);
-          setFetching(false);
+          makeRequest();
         }}
       >
         <div className="form-floating col-auto">
