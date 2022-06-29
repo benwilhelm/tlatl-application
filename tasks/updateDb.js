@@ -1,5 +1,6 @@
 import { db } from '../server/db/index.js';
 
 (async () => {
-  await db.sync({ alter: true });
+  const opts = process.argv[2] === 'clean' ? { force: true } : { alter: true };
+  await db.sync(opts);
 })();

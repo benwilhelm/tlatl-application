@@ -7,15 +7,18 @@ export class ForecastCacheService {
   }
 
   async getByZipAndTimestamp(zip, timestamp) {
+    console.debug('connected to', process.env.DATABASE_CONNECTION_STRING);
     const dbResult = await this.dbClient.getByZipAndTimestamp(
       zip,
       timestamp,
       MAX_AGE
     );
     if (dbResult) {
+      console.debug('found cached forecast');
       return dbResult;
     }
 
+    console.debug('fetching forecast from weather api');
     const apiResult = await this.apiClient.getForecastByZip(zip);
     const hours = apiResponseToHoursArray(apiResult, zip);
     await this.dbClient.bulkCreate(hours);

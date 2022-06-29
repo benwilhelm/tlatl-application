@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { getInstance as getApiClient } from '../services/api.js';
 import { Forecast } from './Forecast.jsx';
-import { server } from '../test-helpers/test-server.js';
 import { useRequest } from '../hooks/useRequest.js';
 
 const apiClient = getApiClient();
@@ -61,6 +60,7 @@ export const ForecastSearch = (props) => {
       {!fetching && !forecast && <InitialPrompt />}
       {fetching && <LoadingIndicator />}
       {forecast && <Forecast forecast={forecast} />}
+      {error && <ErrorComponent error={error} />}
     </div>
   );
 };
@@ -71,4 +71,13 @@ const InitialPrompt = () => {
 
 const LoadingIndicator = () => {
   return <p>Fetching...</p>;
+};
+
+const ErrorComponent = ({ error }) => {
+  return (
+    <div>
+      <h1>Error: {error.message}</h1>
+      <pre>{error.stack}</pre>
+    </div>
+  );
 };

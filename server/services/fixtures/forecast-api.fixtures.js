@@ -4013,3 +4013,34 @@ export const responseThreeDayHourly = {
     ],
   },
 };
+
+export function updateForecastTimes(forecast, nowms) {
+  const now = Math.floor(nowms / 1000);
+  const lastUpdated = now - 600;
+  const tod = topOfDay(now);
+
+  const fc = { ...forecast };
+  fc.location.localtime_epoch = now;
+  fc.current.last_updated_epoch = lastUpdated;
+
+  const days = fc.forecast.forecastday.map((d) => ({
+    ...d,
+    date_epoch: tod,
+    hour: d.hour.map((h, idx) => ({
+      ...h,
+      time_epoch: topOfHour(now, idx),
+    })),
+  }));
+  fc.forecast.forecastday = days;
+  return fc;
+}
+
+function topOfHour(epoch, plusHours = 0) {
+  const toh = epoch - (epoch % 3600);
+  return toh + plusHours * 3600;
+}
+
+function topOfDay(epoch) {
+  const secPerDay = 3600 * 24;
+  return epoch - (epoch % secPerDay);
+}

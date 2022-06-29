@@ -3,6 +3,7 @@ import { setupServer } from 'msw/node/lib/index.js';
 import { mockZip } from '../../test-helpers/fixtures.js';
 import {
   responseThreeDayHourly,
+  updateForecastTimes,
   mockApiKey,
 } from '../fixtures/forecast-api.fixtures.js';
 
@@ -22,7 +23,8 @@ const handlers = [
     }
 
     if (zip === mockZip && days === 3) {
-      return res(ctx.json(responseThreeDayHourly));
+      const forecast = updateForecastTimes(responseThreeDayHourly, Date.now());
+      return res(ctx.json(forecast));
     }
 
     throw new Error(`unrecognized request: ${req.url}`);

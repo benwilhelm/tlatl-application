@@ -1,24 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { Forecast } from './components/Forecast.jsx';
-
-const fakeForecast = {
-  zip: '11111',
-  timestamp: 1654713921,
-  windSpeed: 10,
-  windDirection: 'N',
-  windDegree: 277,
-  temperature: 65,
-  skies: 'Fake Forecast',
-  createdAt: new Date(1654713921678000),
-  updatedAt: new Date(1654713921678000),
-};
+import { ForecastSearch } from './components/ForecastSearch.jsx';
 
 const appDiv = document.getElementById('app');
 const App = () => {
   return (
     <div className="container">
-      <Forecast forecast={fakeForecast} />
+      <ForecastSearch />
     </div>
   );
 };
