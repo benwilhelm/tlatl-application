@@ -19,14 +19,12 @@ export function useRequest(client, baseRequest) {
       })
       .catch((e) => {
         setFetching(false);
-        console.log(e.response);
         if (e.response?.status) {
           e = {
             status: e.response.status,
             data: e.response.data,
           };
         }
-        console.log('hook error', e);
         setError(e);
       });
   };

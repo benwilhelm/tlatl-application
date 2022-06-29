@@ -16,6 +16,11 @@ const handlers = [
     if (!zip || !ts) {
       return res(ctx.status(400));
     }
+
+    if (zip === '00500') {
+      return res(ctx.status(500));
+    }
+
     const forecast = forecastFactory({
       skies: 'Test Forecast from MSW',
       zip,

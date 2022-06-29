@@ -5,18 +5,17 @@ import { useRequest } from '../hooks/useRequest.js';
 
 const apiClient = getApiClient();
 
-const getForecastByZip = async (zip) => {
-  return apiClient.get('/forecast', {
-    params: {
-      zip,
-      ts: Math.floor(Date.now() / 1000),
-    },
-  });
-};
+const isValidZip = (zip) => !!zip.match(/^\d{5}$/);
 
 export const ForecastSearch = (props) => {
   const [zip, setZip] = useState('');
-  const { fetching, response, error, makeRequest } = useRequest(apiClient, {
+  const [formErrors, setFormErrors] = useState(null);
+  const {
+    fetching,
+    response,
+    error: fetchError,
+    makeRequest,
+  } = useRequest(apiClient, {
     url: '/forecast',
     params: {
       zip,
@@ -32,7 +31,13 @@ export const ForecastSearch = (props) => {
         className="form row form--forecast"
         onSubmit={async (e) => {
           e.preventDefault();
-          makeRequest();
+          if (!isValidZip(zip)) {
+            setFormErrors({
+              zip: ['Invalid ZIP'],
+            });
+          } else {
+            makeRequest();
+          }
         }}
       >
         <div className="form-floating col-auto">
@@ -47,6 +52,8 @@ export const ForecastSearch = (props) => {
             onChange={(e) => setZip(e.target.value)}
           />
           <label htmlFor="zip">ZIP</label>
+          {formErrors?.zip &&
+            formErrors.zip.map((err) => <p key={err}>{err}</p>)}
         </div>
 
         <div className="col-auto">
@@ -60,7 +67,7 @@ export const ForecastSearch = (props) => {
       {!fetching && !forecast && <InitialPrompt />}
       {fetching && <LoadingIndicator />}
       {forecast && <Forecast forecast={forecast} />}
-      {error && <ErrorComponent error={error} />}
+      {fetchError && <FetchError />}
     </div>
   );
 };
@@ -73,11 +80,6 @@ const LoadingIndicator = () => {
   return <p>Fetching...</p>;
 };
 
-const ErrorComponent = ({ error }) => {
-  return (
-    <div>
-      <h1>Error: {error.message}</h1>
-      <pre>{error.stack}</pre>
-    </div>
-  );
+const FetchError = () => {
+  return <p>Something went wrong...</p>;
 };
