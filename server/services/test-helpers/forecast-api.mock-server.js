@@ -22,7 +22,7 @@ const handlers = [
       return res(ctx.status(401), ctx.json({ error: mock401Error }));
     }
 
-    if (zip === mockZip && days === 3) {
+    if (days === 3) {
       const forecast = updateForecastTimes(responseThreeDayHourly, Date.now());
       return res(ctx.json(forecast));
     }
