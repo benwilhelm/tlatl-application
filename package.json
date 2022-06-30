@@ -18,6 +18,7 @@
     "test": "jest",
     "test:client": "npm run test -- --projects client",
     "test:server": "npm run test -- --projects server",
+    "e2e": "cypress open --e2e --browser chrome",
     "setupDevDb": "source server/env/development.env.sh && node tasks/updateDb.js"
   },
   "keywords": [],
@@ -44,6 +45,7 @@
     "@parcel/babel-preset-env": "^2.5.0",
     "@testing-library/react": "^13.2.0",
     "@testing-library/user-event": "^14.2.0",
+    "cypress": "^10.3.0",
     "jest": "^27.4.7",
     "msw": "^0.39.2",
     "nodemon": "^2.0.15",
