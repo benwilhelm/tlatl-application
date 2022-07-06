@@ -31,6 +31,7 @@ export const ForecastSearch = (props) => {
         className="form row form--forecast"
         onSubmit={async (e) => {
           e.preventDefault();
+          setFormErrors(null);
           if (!isValidZip(zip)) {
             setFormErrors({
               zip: ['Invalid ZIP'],

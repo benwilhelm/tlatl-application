@@ -33,6 +33,32 @@ test('sets fetching while request is in flight, then resolves', async () => {
   });
 });
 
+test('clears response on subsequent request', async () => {
+  // arrange
+  const expected = { status: 200, data: { hello: 'world' } };
+  const hook = requestFactory(axiosClient);
+  const { makeRequest } = hook.current;
+
+  // act
+  act(makeRequest);
+
+  // fetching state
+  expectIsFetching(hook);
+
+  // resolved state
+  await waitFor(async () => {
+    expectResolvedWith(hook, expected);
+  });
+
+  act(makeRequest);
+  expect(hook.current.response).toEqual(null);
+  expectIsFetching(hook);
+
+  await waitFor(async () => {
+    expectResolvedWith(hook, expected);
+  });
+});
+
 test('sets error and fetching=false for generic error', async () => {
   const expectedError = { error: 'oh no' };
   const spy = jest.spyOn(axiosClient, 'request');
@@ -66,6 +92,27 @@ test('sets error with status and fetching=false when request returns non-200', a
   act(() => {
     makeRequest();
   });
+  expectIsFetching(hook);
+
+  await waitFor(() => {
+    expectErroredWith(hook, expectedError);
+  });
+});
+
+test('clears error on resubmission', async () => {
+  const expectedError = { status: 404, data: { message: 'not found' } };
+  const hook = requestFactory(axiosClient, { url: '/404' });
+  const { makeRequest } = hook.current;
+
+  act(makeRequest);
+  expectIsFetching(hook);
+
+  await waitFor(() => {
+    expectErroredWith(hook, expectedError);
+  });
+
+  act(makeRequest);
+  expect(hook.current.error).toEqual(null);
   expectIsFetching(hook);
 
   await waitFor(() => {

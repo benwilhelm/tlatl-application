@@ -42,6 +42,21 @@ describe('<ForecastSearch />', () => {
     expect(cb).not.toHaveBeenCalled();
   });
 
+  test('should clear bad zip cue on resubmission', async () => {
+    const { component, input, submit, user } = componentFactory();
+    input.focus();
+    await user.keyboard('6066');
+    await user.click(submit);
+    await component.findByText(/invalid zip/i);
+
+    input.focus();
+    user.clear(input);
+    await user.keyboard('60660');
+    await user.click(submit);
+
+    expect(component.queryByText(/invalid zip/i)).toBeNull();
+  });
+
   test('should display error for 500 response from API', async () => {
     const { component, input, submit, user } = componentFactory();
 
